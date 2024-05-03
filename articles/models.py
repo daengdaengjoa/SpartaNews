@@ -9,23 +9,26 @@ class Article(models.Model):
         ("M", "Meat"),
         ("O", "Other"),
     )
-    
+
     title = models.CharField(max_length=120)
     content = models.TextField()
     username = models.CharField(max_length=30)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     url = models.URLField()
-    category = models.CharField(max_length=1, choices=CATEGORY_CHOICES)
-    like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="like_articles")
-    
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES)
+    like_users = models.ManyToManyField(
+        settings.AUTH_USER_MODEL, related_name="like_articles")
+
     def __str__(self):
         return self.title
-    
-    
+
+
 class Comment(models.Model):
-    article = models.ForeignKey(Article, on_delete=models.CASCADE, related_name='comments')
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='comments')
+    article = models.ForeignKey(
+        Article, on_delete=models.CASCADE, related_name='comments')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.CASCADE, related_name='comments')
     content = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
