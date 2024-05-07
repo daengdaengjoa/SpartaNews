@@ -70,3 +70,20 @@ class ArticleDetailAPIView(APIView):
             return Response(data, status=status.HTTP_200_OK)
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST) #게시글 작성자 동일시 작성가능
+
+
+def index(request):
+    sort_by = request.GET.get("sort", None)
+
+    if sort_by == "popular":
+        articles = Article.objects.order_by("-view_count")
+    # elif sort_by == "newest":
+    #     items = Item.objects.order_by("-created_at")
+    # elif sort_by == "liked":
+    #     items = Item.objects.annotate(like_count=Count("liked_by")).order_by(
+    #         "-like_count"
+    #     )
+    else:
+        articles = Article.objects.order_by("-created_at")
+
+    return render(request, "newsplace/index.html", {"articles": articles})
