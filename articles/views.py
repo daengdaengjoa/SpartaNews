@@ -59,3 +59,19 @@ class ArticleDetailAPIView(APIView):
         article.delete()
         data = {"pk": f"{pk} is deleted."}
         return Response(data, status=status.HTTP_200_OK)
+
+def index(request):
+    sort_by = request.GET.get("sort", None)
+
+    if sort_by == "popular":
+        articles = Article.objects.order_by("-view_count")
+    # elif sort_by == "newest":
+    #     items = Item.objects.order_by("-created_at")
+    # elif sort_by == "liked":
+    #     items = Item.objects.annotate(like_count=Count("liked_by")).order_by(
+    #         "-like_count"
+    #     )
+    else:
+        articles = Article.objects.order_by("-created_at")
+
+    return render(request, "newsplace/index.html", {"articles": articles})
