@@ -7,6 +7,8 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated  # 로그인 인증토큰
 from .models import Article
 from .serializer import ArticleSerializer
+from django.db.models import Count
+from django.core.paginator import Paginator
 
 
 class ArticleListAPIView(APIView):
@@ -77,13 +79,24 @@ def index(request):
 
     if sort_by == "popular":
         articles = Article.objects.order_by("-view_count")
-    # elif sort_by == "newest":
-    #     items = Item.objects.order_by("-created_at")
-    # elif sort_by == "liked":
-    #     items = Item.objects.annotate(like_count=Count("liked_by")).order_by(
-    #         "-like_count"
-    #     )
+    elif sort_by == "newest":
+        articles = Article.objects.order_by("-created_at")
+    elif sort_by == "liked":
+        articles = Article.objects.annotate(like_count=Count("like_users")).order_by(
+            "-like_count"
+        )
     else:
         articles = Article.objects.order_by("-created_at")
+    
+    per_page = 3
 
-    return render(request, "newsplace/index.html", {"articles": articles})
+    # Paginator 객체 생성
+    paginator = Paginator(articles, per_page)
+
+    # 요청된 페이지 번호 가져오기. 기본값은 1
+    page_number = request.GET.get('page', 1)
+
+    # 해당 페이지의 기사 목록 가져오기
+    page_articles = paginator.get_page(page_number)
+
+    return render(request, "newsplace/index.html", {"page_articles": page_articles})

@@ -21,24 +21,7 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'index' %}">Home</a>
                     </li>
-                    <!-- {% if user.is_authenticated %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'logout' %}">Logout</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'profile' user.username %}">Profile</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'add_item' %}">Write</a>
-                    </li>
-                    {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'login' %}">Login</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'register' %}">Register</a>
-                    </li>
-                    {% endif %} -->
+
                 </ul>
             </div>
         </div>
@@ -48,23 +31,45 @@
 
         <h2 class="mt-4">newsplace</h2>
         <div class="btn-group mt-2 mb-4">
-            <!-- <a class="btn btn-secondary" href="{% url 'index' %}?sort=popular">Most Popular</a> -->
+            <a class="btn btn-secondary" href="{% url 'index' %}?sort=popular">Most Popular</a>
             <a class="btn btn-secondary" href="{% url 'index' %}?sort=newest">Newest</a>
-            <!-- <a class="btn btn-secondary" href="{% url 'index' %}?sort=liked">Most Liked</a> -->
+            <a class="btn btn-secondary" href="{% url 'index' %}?sort=liked">Most Liked</a>
+            <a class="btn btn-secondary" href="{% url 'index' %}?sort=liked">Rank</a>
         </div>
 
-        <div class="row mt-4">
-            {% for article in articles %}
-            <div class="col-md-4 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ article.title }}</h5>
-                        <p class="card-text">{{ article.url }}</p>
-                        <!-- <a href="{% url 'item_detail' item_id=item.id %}" class="btn btn-primary">View Details</a> -->
-                    </div>
+
+        {% for article in page_articles.object_list %}
+        <div class="col-md-15 mb-1">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ article.title }}</h5>
+                    <p class="card-text">{{ article.url }}</p>
+                    <p class="card-text">{{ article.username }}</p>
+                    <p class="card-text">{{ article.created_at }}</p>
+                    <p class="card-text">{{ article.view_count }}</p>
                 </div>
             </div>
-            {% endfor %}
+        </div>
+        {% endfor %}
+
+
+
+        <div class="pagination">
+            <span class="step-links">
+                {% if page_articles.has_previous %}
+                    <a href="?page=1">&laquo; first</a>
+                    <a href="?page={{ page_articles.previous_page_number }}">previous</a>
+                {% endif %}
+        
+                <span class="current">
+                    Page {{ page_articles.number }} of {{ page_articles.paginator.num_pages }}.
+                </span>
+        
+                {% if page_articles.has_next %}
+                    <a href="?page={{ page_articles.next_page_number }}">next</a>
+                    <a href="?page={{ page_articles.paginator.num_pages }}">last &raquo;</a>
+                {% endif %}
+            </span>
         </div>
     </div>
 
