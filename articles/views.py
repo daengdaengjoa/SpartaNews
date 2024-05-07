@@ -4,61 +4,73 @@ from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated #로그인 인증토큰
+from rest_framework.permissions import IsAuthenticated  # 로그인 인증토큰
 from .models import Article
 from .serializer import ArticleSerializer
 
 
-
 class ArticleListAPIView(APIView):
-    def get_permissions(self):#로그인 인증토큰
+    def get_permissions(self):  # 로그인 인증토큰
         permissions = super().get_permissions()
 
-        if self.request.method.lower() == 'post': #포스트할때만 로그인
+        if self.request.method.lower() == 'post':  # 포스트할때만 로그인
             permissions.append(IsAuthenticated())
 
         return permissions
-    
+
     def get(self, request):
         articles = Article.objects.all()
         serializer = ArticleSerializer(articles, many=True)
         return Response(serializer.data)
-    
+
     def post(self, request):
+        request.data["username"] = request.user.username
         serializer = ArticleSerializer(data=request.data)
+        # serializer.data["username"] = request.user.username #작성시 username 불러오기
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-    
+
 class ArticleDetailAPIView(APIView):
-    def get_permissions(self): #로그인 인증토큰
+    def get_permissions(self):  # 로그인 인증토큰
         permissions = super().get_permissions()
 
         if self.request.method.lower() == ('put' or 'delete'):
             permissions.append(IsAuthenticated())
 
         return permissions
-    
+
     def get_object(self, pk):
         return get_object_or_404(Article, pk=pk)
+    
 
     def get(self, request, pk):
         article = self.get_object(pk)
+        article.view_count += 1 #아티클 뷰수 조회
+        article.save() #아티클 뷰수 조회
         serializer = ArticleSerializer(article)
         return Response(serializer.data)
 
     def put(self, request, pk):
         article = self.get_object(pk)
-        serializer = ArticleSerializer(article, data=request.data, partial=True)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data)
+        if request.user.username == article.username:#게시글 작성자 동일시 작성가능
+            serializer = ArticleSerializer(
+                article, data=request.data, partial=True)
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+                return Response(serializer.data)
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST) #게시글 작성자 동일시 작성가능
 
     def delete(self, request, pk):
         article = self.get_object(pk)
-        article.delete()
-        data = {"pk": f"{pk} is deleted."}
-        return Response(data, status=status.HTTP_200_OK)
+        if request.user.username == article.username:#게시글 작성자 동일시 작성가능
+            article.delete()
+            data = {"pk": f"{pk} is deleted."}
+            return Response(data, status=status.HTTP_200_OK)
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST) #게시글 작성자 동일시 작성가능
+
 
 def index(request):
     sort_by = request.GET.get("sort", None)

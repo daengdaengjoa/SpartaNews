@@ -18,8 +18,9 @@ class Article(models.Model):
     url = models.URLField()
     category = models.CharField(max_length=20, choices=CATEGORY_CHOICES)
     like_users = models.ManyToManyField(
-        settings.AUTH_USER_MODEL, related_name="like_articles")
-    view_count = models.IntegerField(default=0)
+        settings.AUTH_USER_MODEL, related_name="like_articles", )
+    view_count = models.IntegerField(default=0) #아티클뷰카운트
+
 
     def __str__(self):
         return self.title
