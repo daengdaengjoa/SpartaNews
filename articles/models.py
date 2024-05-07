@@ -13,12 +13,12 @@ class Article(models.Model):
     title = models.CharField(max_length=120)
     content = models.TextField()
     username = models.CharField(max_length=30)
+    # username = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='articles')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     url = models.URLField()
     category = models.CharField(max_length=20, choices=CATEGORY_CHOICES)
-    like_users = models.ManyToManyField(
-        settings.AUTH_USER_MODEL, related_name="like_articles", )
+    like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="like_articles", )
     view_count = models.IntegerField(default=0) #아티클뷰카운트
 
 
@@ -34,6 +34,7 @@ class Comment(models.Model):
     content = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
+    like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="like_articles", )
+    
     def __str__(self):
         return self.content

@@ -1,12 +1,10 @@
 from django.shortcuts import render, get_object_or_404
-from django.core import serializers
-from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated  # 로그인 인증토큰
-from .models import Article
-from .serializer import ArticleSerializer
+from .models import Article, Comment
+from .serializer import ArticleSerializer, CommentSerializer
 from django.db.models import Count
 from django.core.paginator import Paginator
 from django.http import QueryDict
@@ -80,13 +78,70 @@ class LikeAPIView(APIView):
     def post(self, request, pk):
         article = get_object_or_404(Article, pk=pk)
         if article.like_users.filter(pk=request.user.pk).exists():
+        # if request.user in article.like_users.all():
             article.like_users.remove(request.user)
             return Response("안좋아요", status=status.HTTP_200_OK)
         else:
             article.like_users.add(request.user)
             return Response("좋아요", status=status.HTTP_200_OK)
-        # return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
 
+
+class CommentAPIView(APIView):
+    def get_permissions(self):  # 로그인 인증토큰
+        permissions = super().get_permissions()
+
+        if self.request.method.lower() == 'post':  # 포스트할때만 로그인
+            permissions.append(IsAuthenticated())
+
+        return permissions
+
+    def get(self, request, pk):
+        comments = Comment.objects.all()
+        serializer = CommentSerializer(comments, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, pk):
+        article = get_object_or_404(Article, pk=pk)
+        request.data["user"] = request.user.username
+        request.data["article"] = article.id
+        serializer = CommentSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class CommentDetailAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request, pk, comment_id):
+        comment = get_object_or_404(Comment, pk=comment_id)
+        if request.user == comment.user:
+            serializer = CommentSerializer(comment, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk, comment_id):
+        comment = get_object_or_404(Comment, pk=comment_id)
+        if request.user == comment.user:
+            comment.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class CommentLikeAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request, pk, comment_id):
+        comment = get_object_or_404(Comment, pk=pk)
+        if comment.like_users.filter(pk=request.user.pk).exists():
+        # if request.user in comment.like_users.all():
+            comment.like_users.remove(request.user)
+            return Response("안좋아요", status=status.HTTP_200_OK)
+        else:
+            comment.like_users.add(request.user)
+            return Response("좋아요", status=status.HTTP_200_OK)
 
 
 def index(request):
