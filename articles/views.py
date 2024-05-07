@@ -9,6 +9,7 @@ from .models import Article
 from .serializer import ArticleSerializer
 from django.db.models import Count
 from django.core.paginator import Paginator
+from django.http import QueryDict
 
 
 class ArticleListAPIView(APIView):
@@ -104,13 +105,16 @@ def index(request):
     
     per_page = 3
 
-    # Paginator 객체 생성
     paginator = Paginator(articles, per_page)
 
-    # 요청된 페이지 번호 가져오기. 기본값은 1
     page_number = request.GET.get('page', 1)
 
-    # 해당 페이지의 기사 목록 가져오기
-    page_articles = paginator.get_page(page_number)
+    next_page_query = QueryDict(mutable=True)
+    next_page_query['sort'] = sort_by if sort_by else None
 
-    return render(request, "newsplace/index.html", {"page_articles": page_articles})
+    page_articles = paginator.get_page(page_number)
+    page_articles.next_page_query = next_page_query.urlencode()
+
+    return render(request, "newsplace/index.html", {
+        "page_articles": page_articles
+    })
