@@ -74,6 +74,20 @@ class ArticleDetailAPIView(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST) #게시글 작성자 동일시 작성가능
 
 
+class LikeAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request, pk):
+        article = get_object_or_404(Article, pk=pk)
+        if article.like_users.filter(pk=request.user.pk).exists():
+            article.like_users.remove(request.user)
+            return Response("안좋아요", status=status.HTTP_200_OK)
+        else:
+            article.like_users.add(request.user)
+            return Response("좋아요", status=status.HTTP_200_OK)
+        # return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
+
+
+
 def index(request):
     sort_by = request.GET.get("sort", None)
 
