@@ -17,7 +17,6 @@ class SignUpAPIView(APIView):
             serializer.save()
             return Response("회원가입 완료!", status=status.HTTP_201_CREATED)
 
-
 class ProfileAPIView(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request, username):
