@@ -1,9 +1,10 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import redirect, render, get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated  # 로그인 인증토큰
 from .models import Article, Comment
+from .forms import ArticleForm
 from .serializer import ArticleSerializer, CommentSerializer
 from django.db.models import Count
 from django.core.paginator import Paginator
@@ -26,11 +27,24 @@ class ArticleListAPIView(APIView):
 
     def post(self, request):
         request.data["username"] = request.user.username
-        serializer = ArticleSerializer(data=request.data)
-        # serializer.data["username"] = request.user.username #작성시 username 불러오기
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        # serializer = ArticleSerializer(data=request.data)
+        # # serializer.data["username"] = request.user.username #작성시 username 불러오기
+        # # if serializer.is_valid(raise_exception=True):
+        # #     serializer.save()
+
+    # def create(self, request):
+        if request.method == "POST":
+            form = ArticleForm(request.POST)
+            if form.is_vaild():
+                article = form.save
+                return redirect("articled_detail", article.pk)
+
+        else:
+            form = ArticleForm()
+
+        context = {"form": form}
+        return render(request, "create.html", context)
+
 
 class ArticleDetailAPIView(APIView):
     def get_permissions(self):  # 로그인 인증토큰
@@ -43,42 +57,44 @@ class ArticleDetailAPIView(APIView):
 
     def get_object(self, pk):
         return get_object_or_404(Article, pk=pk)
-    
 
     def get(self, request, pk):
         article = self.get_object(pk)
-        article.view_count += 1 #아티클 뷰수 조회
-        article.save() #아티클 뷰수 조회
+        article.view_count += 1  # 아티클 뷰수 조회
+        article.save()  # 아티클 뷰수 조회
         serializer = ArticleSerializer(article)
         return Response(serializer.data)
 
     def put(self, request, pk):
         article = self.get_object(pk)
-        if request.user.username == article.username:#게시글 작성자 동일시 작성가능
+        if request.user.username == article.username:  # 게시글 작성자 동일시 작성가능
             serializer = ArticleSerializer(
                 article, data=request.data, partial=True)
             if serializer.is_valid(raise_exception=True):
                 serializer.save()
                 return Response(serializer.data)
         else:
-            return Response(status=status.HTTP_400_BAD_REQUEST) #게시글 작성자 동일시 작성가능
+            # 게시글 작성자 동일시 작성가능
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
         article = self.get_object(pk)
-        if request.user.username == article.username:#게시글 작성자 동일시 작성가능
+        if request.user.username == article.username:  # 게시글 작성자 동일시 작성가능
             article.delete()
             data = {"pk": f"{pk} is deleted."}
             return Response(data, status=status.HTTP_200_OK)
         else:
-            return Response(status=status.HTTP_400_BAD_REQUEST) #게시글 작성자 동일시 작성가능
+            # 게시글 작성자 동일시 작성가능
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class LikeAPIView(APIView):
     permission_classes = [IsAuthenticated]
+
     def post(self, request, pk):
         article = get_object_or_404(Article, pk=pk)
         if article.like_users.filter(pk=request.user.pk).exists():
-        # if request.user in article.like_users.all():
+            # if request.user in article.like_users.all():
             article.like_users.remove(request.user)
             return Response("안좋아요", status=status.HTTP_200_OK)
         else:
@@ -133,10 +149,11 @@ class CommentDetailAPIView(APIView):
 
 class CommentLikeAPIView(APIView):
     permission_classes = [IsAuthenticated]
+
     def post(self, request, pk, comment_id):
         comment = get_object_or_404(Comment, pk=pk)
         if comment.like_users.filter(pk=request.user.pk).exists():
-        # if request.user in comment.like_users.all():
+            # if request.user in comment.like_users.all():
             comment.like_users.remove(request.user)
             return Response("안좋아요", status=status.HTTP_200_OK)
         else:
@@ -157,7 +174,7 @@ def index(request):
         )
     else:
         articles = Article.objects.order_by("-created_at")
-    
+
     per_page = 3
 
     paginator = Paginator(articles, per_page)
