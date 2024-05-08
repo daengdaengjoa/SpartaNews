@@ -3,7 +3,6 @@ from .models import Article
 
 class ArticleForm(forms.ModelForm):
     
-    
     CATEGORY_CHOICES = [
         
         ("technology", "Technology"),
@@ -12,7 +11,6 @@ class ArticleForm(forms.ModelForm):
         ("hobby", "Hobby"),
         
     ]
-    
     
     class Meta:
         model = Article
