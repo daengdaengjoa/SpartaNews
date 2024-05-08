@@ -4,16 +4,15 @@ from django.conf import settings
 
 class Article(models.Model):
     CATEGORY_CHOICES = (
-        ("F", "Fruit"),
-        ("V", "Vegetable"),
-        ("M", "Meat"),
-        ("O", "Other"),
+        ("technology", "Technology"),
+        ("AI", "AI"),
+        ("Life", "Life"),
+        ("hobby", "Hobby"),
     )
     
     title = models.CharField(max_length=120)
     content = models.TextField()
     username = models.CharField(max_length=30)
-    # username = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='articles')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     url = models.URLField()
@@ -34,7 +33,7 @@ class Comment(models.Model):
     content = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="like_articles", )
+    like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="like_comments", )
     
     def __str__(self):
         return self.content
