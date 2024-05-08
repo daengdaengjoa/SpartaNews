@@ -46,6 +46,7 @@ class ArticleListAPIView(APIView):
         return render(request, "create.html", context)
 
 
+
 class ArticleDetailAPIView(APIView):
     def get_permissions(self):  # 로그인 인증토큰
         permissions = super().get_permissions()
@@ -63,7 +64,9 @@ class ArticleDetailAPIView(APIView):
         article.view_count += 1  # 아티클 뷰수 조회
         article.save()  # 아티클 뷰수 조회
         serializer = ArticleSerializer(article)
-        return Response(serializer.data)
+        comments = Comment.objects.filter(article=article)
+        return render(request, 'newsplace/detail.html', {'article': article, 'comments': comments})
+
 
     def put(self, request, pk):
         article = self.get_object(pk)
@@ -190,3 +193,4 @@ def index(request):
     return render(request, "newsplace/index.html", {
         "page_articles": page_articles
     })
+

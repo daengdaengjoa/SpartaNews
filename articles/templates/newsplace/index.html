@@ -44,7 +44,7 @@
                         <a class="nav-link" href="#">Login</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Register</a>
+                        <a class="nav-link" href="{% url 'signup' %}">Register</a>
                     </li>
                     {% endif %}
 
@@ -69,8 +69,8 @@
         <div class="col-md-15 mb-1">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">{{ article.title }}</h5>
-                    <p class="card-text">{{ article.url }}</p>
+                    <h5 class="card-title, text-dark"><a href="{% url 'detail' article.id %}">{{ article.title }}</a></h5>
+                    <p class="card-text"><a href="{{ article.url }}">{{ article.url }}</a></p>
                     <p class="card-text">{{ article.username }}</p>
                     <p class="card-text">{{ article.created_at }}</p>
                     <p class="card-text">{{ article.view_count }}</p>
