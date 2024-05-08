@@ -20,7 +20,6 @@ class Article(models.Model):
     like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="like_articles", )
     view_count = models.IntegerField(default=0) #아티클뷰카운트
 
-
     def __str__(self):
         return self.title
 

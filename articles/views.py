@@ -112,13 +112,13 @@ class CommentAPIView(APIView):
         return permissions
 
     def get(self, request, pk):
-        comments = Comment.objects.all()
+        comments = Comment.objects.all().filter(article=pk)
         serializer = CommentSerializer(comments, many=True)
         return Response(serializer.data)
 
     def post(self, request, pk):
         article = get_object_or_404(Article, pk=pk)
-        request.data["user"] = request.user.username
+        request.data["user"] = request.user.pk
         request.data["article"] = article.id
         serializer = CommentSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
@@ -128,11 +128,11 @@ class CommentAPIView(APIView):
 
 class CommentDetailAPIView(APIView):
     permission_classes = [IsAuthenticated]
-
     def put(self, request, pk, comment_id):
         comment = get_object_or_404(Comment, pk=comment_id)
         if request.user == comment.user:
-            serializer = CommentSerializer(comment, data=request.data)
+            serializer = CommentSerializer(comment, data=request.data, partial=True)
+            print(serializer)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
@@ -151,7 +151,7 @@ class CommentLikeAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, pk, comment_id):
-        comment = get_object_or_404(Comment, pk=pk)
+        comment = get_object_or_404(Comment, pk=comment_id)
         if comment.like_users.filter(pk=request.user.pk).exists():
             # if request.user in comment.like_users.all():
             comment.like_users.remove(request.user)
