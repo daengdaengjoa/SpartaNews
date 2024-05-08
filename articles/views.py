@@ -32,6 +32,18 @@ class ArticleListAPIView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    # def add_article(request):
+    #     if request.method == "POST":
+    #         form = ArticleForm(request.POST)
+    #         if form.is_valid():
+    #             article = form.save(commit=False)
+    #             article.username = request.user
+    #             article.save()
+    #             return redirect("index")
+    #     else:
+    #         form = ArticleForm()
+    #     return render(request, "newsplace/create.html", {"form": form})
+            
 class ArticleDetailAPIView(APIView):
     def get_permissions(self):  # 로그인 인증토큰
         permissions = super().get_permissions()
@@ -50,7 +62,9 @@ class ArticleDetailAPIView(APIView):
         article.view_count += 1 #아티클 뷰수 조회
         article.save() #아티클 뷰수 조회
         serializer = ArticleSerializer(article)
-        return Response(serializer.data)
+        comments = Comment.objects.filter(article=article)
+        return render(request, 'newsplace/detail.html', {'article': article, 'comments': comments})
+
 
     def put(self, request, pk):
         article = self.get_object(pk)

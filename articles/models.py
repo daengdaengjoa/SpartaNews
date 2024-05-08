@@ -14,7 +14,7 @@ class Article(models.Model):
     content = models.TextField()
     username = models.CharField(max_length=30)
     # username = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='articles')
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True)
     url = models.URLField()
     category = models.CharField(max_length=20, choices=CATEGORY_CHOICES)
@@ -32,9 +32,9 @@ class Comment(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                             on_delete=models.CASCADE, related_name='comments')
     content = models.CharField(max_length=255)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True,)
     updated_at = models.DateTimeField(auto_now=True)
-    like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="like_articles", )
+    like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="like_comments", )
     
     def __str__(self):
         return self.content

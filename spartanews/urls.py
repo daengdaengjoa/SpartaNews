@@ -27,4 +27,6 @@ urlpatterns = [
     path('api/accounts/', include('accounts.urls')),
     path('api/articles/', include('articles.urls')),
     path('api/users/', include('users.urls')),
+    path('api/articles/<int:pk>/', views.ArticleDetailAPIView.as_view(), name='detail'),  # 기사 디테일 뷰 URL 패턴 추가
+
 ]
