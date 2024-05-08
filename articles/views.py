@@ -4,7 +4,6 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated  # 로그인 인증토큰
 from .models import Article, Comment
-from .forms import ArticleForm
 from .serializer import ArticleSerializer, CommentSerializer
 from django.db.models import Count
 from django.core.paginator import Paginator
@@ -28,30 +27,9 @@ class ArticleListAPIView(APIView):
     def post(self, request):
         request.data["username"] = request.user.username
         serializer = ArticleSerializer(data=request.data)
-        # serializer.data["username"] = request.user.username #작성시 username 불러오기
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-# class ArticleCreateAPIView(APIView):
-#     #drf url > views.py
-#     #퓨어 url > views.py
-    
-#     def post(self, request):
-        
-#         request.data["username"] = request.user.username 
-    
-    
-#         if request.method == "POST":
-#             form = ArticleForm(request.POST)
-#             if form.is_vaild():
-#                 article = form.save
-#                 return redirect("articled_detail", article.pk)
-
-#         else:
-#             form = ArticleForm()
-
-#         return render(request, "create.html", {"form": form})
 
 
 class ArticleDetailAPIView(APIView):
