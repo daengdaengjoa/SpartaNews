@@ -151,21 +151,6 @@ class CommentLikeAPIView(APIView):
             return Response("좋아요", status=status.HTTP_200_OK)
 
 
-def calculate_rank(like_count, view_count, created_at):
-    # 현재 시간
-    now = datetime.now()
-    
-    # 작성된 날짜와 현재 시간의 차이를 계산
-    time_difference = now - created_at
-
-    # 시간 차이를 기반으로 점수 계산
-    # 최신일수록 높은 점수를 부여
-    time_weight = 1 / (1 + time_difference.days)
-
-    # 좋아요를 5점으로, 조회수를 1점으로 가정하여 랭크 계산
-    return (5 * like_count + view_count) * time_weight
-
-
 def index(request):
     sort_by = request.GET.get("sort", None)
     query = request.GET.get("query", None)
