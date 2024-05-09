@@ -34,11 +34,12 @@ Main Page:
 Implemented sorting functionality.
 Detail Page:
 Implemented detail page.
-- **김예은** : 
+- **김예은** :
+accounts login/out functionality,
+Comment CRUD operations
 - **신지혜** :
 Article CRUD operations
 Like feature
-
 - **전관** :
 Article CRUD operations,
 Comment CRUD operations,
