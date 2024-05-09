@@ -26,8 +26,8 @@ With its user-friendly interface, advanced search options, and enhanced authenti
 
 ## 🧑‍🤝‍🧑 Development Team: Team-13
 - **김준수** : 
-sorting functionality.
-Search functionality
+sorting functionality,
+Search functionality,
 Pagination
 
 - **김예은** : 
@@ -36,9 +36,9 @@ Article CRUD operations
 Like feature
 
 - **전관** :
-Article CRUD operations
-Comment CRUD operations
-Token-Based Authentication
+Article CRUD operations,
+Comment CRUD operations,
+Token-Based Authentication,
 Administrator permissions 
 
 
