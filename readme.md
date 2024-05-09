@@ -52,6 +52,7 @@ With its user-friendly interface, advanced search options, and enhanced authenti
 ## 📝 Project Architecture
 S.A. 노션 : https://www.notion.so/teamsparta/S-A-11d6d27e54ae40758ac8178f061822ea
 ![image](https://github.com/daengdaengjoa/SpartaNews/assets/156053546/8547e415-0d92-4e57-a06e-7449ab26c5b0)
+![image](https://github.com/daengdaengjoa/SpartaNews/assets/156053546/36ef5e02-fb65-41ec-a057-eec4d1b9d727)
 
 시연영상
 https://www.youtube.com/watch?v=lOL_L8jN1uk
