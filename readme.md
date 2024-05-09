@@ -25,10 +25,21 @@ With its user-friendly interface, advanced search options, and enhanced authenti
 <br>
 
 ## 🧑‍🤝‍🧑 Development Team: Team-13
-- **김준수** :  
+- **김준수** : 
+sorting functionality.
+Search functionality
+Pagination
+
 - **김예은** : 
-- **신지혜** : 
-- **전관** : 
+- **신지혜** :
+Article CRUD operations
+Like feature
+
+- **전관** :
+Article CRUD operations
+Comment CRUD operations
+Token-Based Authentication
+Administrator permissions 
 
 
 <br>
