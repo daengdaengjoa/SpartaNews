@@ -9,6 +9,7 @@ from .serializer import ArticleSerializer, CommentSerializer
 from django.db.models import Count
 from django.core.paginator import Paginator
 from django.http import QueryDict
+from django.db.models import Q
 
 
 class ArticleListAPIView(APIView):
@@ -166,31 +167,37 @@ class CommentLikeAPIView(APIView):
 
 def index(request):
     sort_by = request.GET.get("sort", None)
+    query = request.GET.get("query", None)
 
-    if sort_by == "popular":
-        articles = Article.objects.order_by("-view_count")
-    elif sort_by == "newest":
-        articles = Article.objects.order_by("-created_at")
-    elif sort_by == "liked":
-        articles = Article.objects.annotate(like_count=Count("like_users")).order_by(
-            "-like_count"
-        )
-    else:
-        articles = Article.objects.order_by("-created_at")
+    articles = Article.objects.all()
+
+    if query:
+        articles = articles.filter(Q(title__icontains=query))
+
+    if not query:  # 쿼리가 없을 때만 기본 정렬을 사용
+        if sort_by == "popular":
+            articles = articles.order_by("-view_count")
+        elif sort_by == "newest":
+            articles = articles.order_by("-created_at")
+        elif sort_by == "liked":
+            articles = articles.annotate(like_count=Count("like_users")).order_by("-like_count")
+        else:
+            articles = articles.order_by("-created_at")
+    else:  # 검색 중에는 정렬을 변경하지 않음
+        pass
 
     per_page = 3
-
     paginator = Paginator(articles, per_page)
-
     page_number = request.GET.get('page', 1)
 
     next_page_query = QueryDict(mutable=True)
     next_page_query['sort'] = sort_by if sort_by else None
+    next_page_query['query'] = query if query else None
 
     page_articles = paginator.get_page(page_number)
     page_articles.next_page_query = next_page_query.urlencode()
 
     return render(request, "newsplace/index.html", {
-        "page_articles": page_articles
+        "page_articles": page_articles,
+        "query": query,
     })
-
