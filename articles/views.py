@@ -5,7 +5,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated  # 로그인 인증토큰
 from .models import Article, Comment
 from .serializer import ArticleSerializer, CommentSerializer
-from django.db.models import Count
+from django.db.models import Count, F, ExpressionWrapper, FloatField
 from django.core.paginator import Paginator
 from django.http import QueryDict
 from django.db.models import Q
@@ -151,6 +151,21 @@ class CommentLikeAPIView(APIView):
             return Response("좋아요", status=status.HTTP_200_OK)
 
 
+def calculate_rank(like_count, view_count, created_at):
+    # 현재 시간
+    now = datetime.now()
+    
+    # 작성된 날짜와 현재 시간의 차이를 계산
+    time_difference = now - created_at
+
+    # 시간 차이를 기반으로 점수 계산
+    # 최신일수록 높은 점수를 부여
+    time_weight = 1 / (1 + time_difference.days)
+
+    # 좋아요를 5점으로, 조회수를 1점으로 가정하여 랭크 계산
+    return (5 * like_count + view_count) * time_weight
+
+
 def index(request):
     sort_by = request.GET.get("sort", None)
     query = request.GET.get("query", None)
@@ -158,18 +173,24 @@ def index(request):
     articles = Article.objects.all()
 
     if query:
-        articles = articles.filter(Q(title__icontains=query))
+        articles = articles.filter(
+            Q(title__icontains=query) |  # 제목 검색
+            Q(content__icontains=query) |  # 내용 검색
+            Q(username__icontains=query)  # 작성자 이름 검색
+        )
 
-    if not query:  # 쿼리가 없을 때만 기본 정렬을 사용
+    if not query: 
         if sort_by == "popular":
             articles = articles.order_by("-view_count")
         elif sort_by == "newest":
             articles = articles.order_by("-created_at")
         elif sort_by == "liked":
             articles = articles.annotate(like_count=Count("like_users")).order_by("-like_count")
+        elif sort_by == "rank":
+            articles = articles.annotate(rank=ExpressionWrapper(Count('like_users') * 5 + F('view_count'), output_field=FloatField())).order_by('-rank', '-created_at')
         else:
             articles = articles.order_by("-created_at")
-    else:  # 검색 중에는 정렬을 변경하지 않음
+    else: 
         pass
 
     per_page = 3
