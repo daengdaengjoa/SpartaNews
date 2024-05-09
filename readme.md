@@ -29,7 +29,11 @@ With its user-friendly interface, advanced search options, and enhanced authenti
 sorting functionality,
 Search functionality,
 Pagination
-
+-Frontend Development:
+Main Page:
+Implemented sorting functionality.
+Detail Page:
+Implemented detail page.
 - **김예은** : 
 - **신지혜** :
 Article CRUD operations
