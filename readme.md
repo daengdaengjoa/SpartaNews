@@ -109,20 +109,22 @@ https://www.youtube.com/watch?v=lOL_L8jN1uk
 <br> 
 
 ## ✒️ API
-| Endpoint                                   | Method | Description                                                  | Request Body Data                                                   | Response Code       |
-|--------------------------------------------|--------|--------------------------------------------------------------|---------------------------------------------------------------------|---------------------|
-| `/api/articles/`                          | GET    | Retrieve a list of all articles.                             | -                                                                   | 200 OK              |
-|                                            | POST   | Create a new article. Requires authentication.              | `{ "title": "Article Title", "content": "Article Content" }`       | 201 Created        |
-| `/api/articles/<pk>`                      | GET    | Retrieve details of a specific article.                      | -                                                                   | 200 OK              |
-|                                            | PUT    | Update details of a specific article. Requires authentication.| `{ "title": "Updated Title", "content": "Updated Content" }`       | 200 OK              |
-|                                            | DELETE | Delete a specific article. Requires authentication.         | -                                                                   | 204 No Content      |
-| `/api/articles/<pk>/like/`                | POST   | Like or unlike a specific article. Requires authentication.| -                                                                   | 200 OK              |
-| `/api/articles/<pk>/comments/`            | GET    | Retrieve comments for a specific article.                    | -                                                                   | 200 OK              |
-|                                            | POST   | Create a new comment for a specific article. Requires authentication. | `{ "content": "Comment Content" }`                             | 201 Created        |
-| `/api/articles/<pk>/comments/<comment_id>/`| PUT    | Update a specific comment. Requires authentication.         | `{ "content": "Updated Comment Content" }`                       | 200 OK              |
-|                                            | DELETE | Delete a specific comment. Requires authentication.         | -                                                                   | 204 No Content      |
-| `/api/articles/<pk>/comments/<comment_id>/like/` | POST | Like or unlike a specific comment. Requires authentication. | -                                                                   | 200 OK              |
-| `/api/signup/`                            | POST   | Register a new user. Returns a message upon successful registration. Requires authentication. | `{ "username": "Username", "password": "Password" }`          | 201 Created        |
-| `/api/profile/<username>/`                | GET    | Retrieve the profile of a specific user. Requires authentication. | -                                                                   | 200 OK              |
+| Endpoint                                                            | Method | Description                                                  | Request Body Data                                                           |
+|---------------------------------------------------------------------|--------|--------------------------------------------------------------|-----------------------------------------------------------------------------|
+| `/api/accounts/signup/`                                             | POST   | 회원가입                                                      | - {"username":ID, "password":PASSWORD}                                      |
+| `/api/accounts/login/`                                              | POST   | 로그인                                                        | - {"username":ID, "password":PASSWORD}                                      |
+| `/api/accounts/logout/`                                             | POST   | 로그아웃                                                      | -                                                                           |
+| `/api/accounts/login/refresh/`                                      | POST   | 토큰 재발급                                                   | - {"refresh_Token":refresh_Token}                                           |
+| `/api/articles/`                                                    | GET    | 게시글 목록 조회                                              | -                                                                           |
+|                                                                     | POST   | 게시글 생성                                                   | - {"title": title, "content": content, "url": url, "category": category}    |
+| `/api/articles/<int:article_id>/`                                   | GET    | 게시글 조회                                                   | -                                                                           |
+|                                                                     | PUT    | 게시글 수정                                                   | - {"title": title, "content": content}                                      |
+|                                                                     | DELETE | 게시글 삭제                                                   | -                                                                           |
+| `/api/articles/<int:article_id>/like/`                              | POST   | 게시글 좋아요                                                 | -                                                                           |
+| `/api/articles/<int:article_id>/comments/`                          | GET    | 댓글 조회(한 게시글)                                          | -                                                                            |
+|                                                                     | POST   | 댓글 생성                                                     | - {"content":content}                                                       |
+| `/api/articles/<int:article_id>/comments/<int:comment_id>/`         | PUT    | 댓글 수정                                                     | - {"content":content}                                                       |
+|                                                                     | DELETE | 댓글 삭제                                                     | -                                                                           |
+| `/api/articles/<int:article_id>/comments/<int:comment_id>/like/`    | POST   | 댓글 좋아요                                                   | -                                                                           |
 
 
