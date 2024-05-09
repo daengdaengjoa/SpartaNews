@@ -29,7 +29,7 @@ With its user-friendly interface, advanced search options, and enhanced authenti
 sorting functionality,
 Search functionality,
 Pagination
--Frontend Development:
+- Frontend Development:
 Main Page:
 Implemented sorting functionality.
 Detail Page:
