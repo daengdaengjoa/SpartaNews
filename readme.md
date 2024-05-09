@@ -24,7 +24,7 @@ With its user-friendly interface, advanced search options, and enhanced authenti
 - 발표
 <br>
 
-## 🧑‍🤝‍🧑 Development Team: Team-8 
+## 🧑‍🤝‍🧑 Development Team: Team-13
 - **김준수** :  
 - **김예은** : 
 - **신지혜** : 
