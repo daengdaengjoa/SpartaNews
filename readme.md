@@ -72,7 +72,7 @@ S.A. 노션 : https://www.notion.so/teamsparta/S-A-11d6d27e54ae40758ac8178f06182
 ![image](https://github.com/daengdaengjoa/SpartaNews/assets/156053546/b1e7eb57-53b7-494e-9059-258a4fbdaba5)
 
 시연영상
-[ttps://www.youtube.com/watch?v=lOL_L8jN1uk](https://www.youtube.com/watch?v=JPraElNvQ0U)
+https://youtu.be/NYFmQRKADbw?si=WjazlEAEvF6CCac-
 <br>
 
 ## 📌 Key Features
